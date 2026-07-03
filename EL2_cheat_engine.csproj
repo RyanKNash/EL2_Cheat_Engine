@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>EL2_cheat_engine</AssemblyName>
+    <RootNamespace>EL2_cheat_engine</RootNamespace>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);EL2_CHEAT_ENGINE_DEBUG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+
+    <Reference Include="0Harmony">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+
+    <Reference Include="Amplitude.Framework">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\Amplitude.Framework.dll</HintPath>
+    </Reference>
+
+    <Reference Include="Assembly-CSharp">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2\Endless Legend 2_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+
+    <Reference Include="UnityEngine">
+      <HintPath>V:\SteamLibrary\steamapps\common\Endless Legend 2_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

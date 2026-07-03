@@ -1,0 +1,87 @@
+# ============================
+# Build output
+# ============================
+bin/
+obj/
+out/
+publish/
+assets/
+
+# ============================
+# Visual Studio
+# ============================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ============================
+# VS Code
+# ============================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ============================
+# Rider / ReSharper
+# ============================
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# ============================
+# Debugging
+# ============================
+*.pdb
+*.mdb
+
+# Uncomment if you never want logs
+# *.log
+
+# ============================
+# NuGet
+# ============================
+packages/
+*.nupkg
+
+# ============================
+# Generated files
+# ============================
+Generated/
+TestResults/
+
+# ============================
+# OS files
+# ============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ============================
+# Temporary
+# ============================
+*.tmp
+*.bak
+*.orig
+*.cache
+
+# ============================
+# BepInEx local testing
+# ============================
+
+# If you keep a local copy of the game beside the project
+Game/
+Endless Legend 2/
+BepInEx/
+doorstop_libs/
+winhttp.dll
+version.dll
+
+# ============================
+# Optional release packages
+# ============================
+Release/
+Dist/
