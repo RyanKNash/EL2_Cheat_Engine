@@ -85,3 +85,5 @@ version.dll
 # ============================
 Release/
 Dist/
+# Local changelog output
+changelog/

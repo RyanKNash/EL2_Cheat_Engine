@@ -2,17 +2,17 @@ namespace EL2_cheat_engine
 {
 	public static class ModState
 	{
-		public static bool ShowMenu = false;
+		public static bool MenuExpanded = true;
 
-		public static float IndustryMult = 100f;
+		public static float IndustryMult = Config.IndustryMultiplierDefault;
 
-		public static float MoneyMult = 1000f;
+		public static float MoneyMult = Config.MoneyMultiplierDefault;
 
-		public static float InfluenceMult = 1000f;
+		public static float InfluenceMult = Config.InfluenceMultiplierDefault;
 
-		public static float ScienceMult = 1000f;
+		public static float ScienceMult = Config.ScienceMultiplierDefault;
 
-		public static float FameMult = 10f;
+		public static float FameMult = Config.FameMultiplierDefault;
 
 		public static bool EnableIndustry = false;
 
@@ -24,17 +24,31 @@ namespace EL2_cheat_engine
 
 		public static bool EnableFame = false;
 
-		public static int ResourceAmount = 1000;
+		public static int ResourceAmount = Config.ResourceAmountDefault;
 
 		public static bool FillStrategic = false;
 
 		public static bool FillLuxury = false;
 
-		public static bool FillSpecials = false;
+		public static bool FillSpecial26 = false;
+
+		public static bool FillSpecial27 = false;
+
+		public static bool FillSpecial28 = false;
+
+		public static bool FillSpecial29 = false;
+
+		public static bool FillSpecial30 = false;
+
+		public static bool FillSpecial31 = false;
+
+		public static bool FillSpecial32 = false;
+
+		public static bool AddGold = false;
+
+		public static bool AddInfluence = false;
 
 		public static int HumanEmpireIndexOverride = -1;
-
-		public static bool AllowResourceInjection = false;
 
 		public static bool[] TargetPlayers = new bool[7];
 	}

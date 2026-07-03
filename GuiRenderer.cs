@@ -4,9 +4,10 @@ namespace EL2_cheat_engine
 {
 	public sealed class GuiRenderer
 	{
+		private static readonly Rect ReopenButtonRect = new Rect(10f, 10f, 34f, 30f);
+
 		private Rect windowRect;
 		private bool loggedOnGuiFirstRun;
-		private bool expanded = true;
 
 		private GUIStyle titleStyle;
 		private GUIStyle headerStyle;
@@ -14,7 +15,6 @@ namespace EL2_cheat_engine
 		private GUIStyle targetButtonStyle;
 		private GUIStyle toggleStyle;
 		private GUIStyle sliderLabelStyle;
-		private GUIStyle debugLabelStyle;
 
 		private Texture2D bgTexture;
 		private Texture2D btnTexture;
@@ -43,16 +43,15 @@ namespace EL2_cheat_engine
 			}
 
 			EnsureInitialized();
-			GUI.Label(new Rect(10f, 10f, 560f, 24f), "EL2 Cheat Engine loaded - Press Home/F8/Insert/F10", debugLabelStyle);
 
-			if (!ModState.ShowMenu && GUI.Button(new Rect(10f, 36f, 110f, 26f), "Open EL2CE"))
+			if (!ModState.MenuExpanded)
 			{
-				ModState.ShowMenu = true;
-				ModLog.Info($"Open EL2CE button pressed. Menu toggled: {ModState.ShowMenu}");
-			}
+				if (GUI.Button(ReopenButtonRect, "\u25bc", buttonStyle))
+				{
+					ModState.MenuExpanded = true;
+					ModLog.Info("Menu expanded from reopen button.");
+				}
 
-			if (!ModState.ShowMenu)
-			{
 				return;
 			}
 
@@ -74,11 +73,6 @@ namespace EL2_cheat_engine
 		{
 			EnsureInitialized();
 			DrawHeader();
-			if (!expanded)
-			{
-				GUI.DragWindow();
-				return;
-			}
 
 			GUILayout.Space(15f);
 			GUILayout.Label("Target Empires", headerStyle);
@@ -89,11 +83,11 @@ namespace EL2_cheat_engine
 			GUILayout.Space(15f);
 			GUILayout.Label("Yield Multipliers", headerStyle);
 			GUILayout.BeginVertical("box");
-			DrawStyledSlider("Dust", icoDust, ref ModState.EnableMoney, ref ModState.MoneyMult, 5000f);
-			DrawStyledSlider("Industry", icoInd, ref ModState.EnableIndustry, ref ModState.IndustryMult, 1000f);
-			DrawStyledSlider("Science", icoSci, ref ModState.EnableScience, ref ModState.ScienceMult, 5000f);
-			DrawStyledSlider("Influence", icoInf, ref ModState.EnableInfluence, ref ModState.InfluenceMult, 5000f);
-			DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, 100f);
+			DrawStyledSlider("Dust", icoDust, ref ModState.EnableMoney, ref ModState.MoneyMult, Config.MoneyMultiplierMax);
+			DrawStyledSlider("Industry", icoInd, ref ModState.EnableIndustry, ref ModState.IndustryMult, Config.IndustryMultiplierMax);
+			DrawStyledSlider("Science", icoSci, ref ModState.EnableScience, ref ModState.ScienceMult, Config.ScienceMultiplierMax);
+			DrawStyledSlider("Influence", icoInf, ref ModState.EnableInfluence, ref ModState.InfluenceMult, Config.InfluenceMultiplierMax);
+			DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
 			GUILayout.EndVertical();
 
 			GUILayout.Space(20f);
@@ -101,35 +95,47 @@ namespace EL2_cheat_engine
 			GUILayout.BeginVertical("box");
 			GUILayout.BeginHorizontal();
 			GUILayout.Label($"Amount: {ModState.ResourceAmount}", GUILayout.Width(100f));
-			ModState.ResourceAmount = (int)GUILayout.HorizontalSlider(ModState.ResourceAmount, 100f, 10000f);
+			ModState.ResourceAmount = (int)GUILayout.HorizontalSlider(ModState.ResourceAmount, Config.ResourceAmountMin, Config.ResourceAmountMax);
 			GUILayout.EndHorizontal();
-
-			GUILayout.Space(8f);
-			ModState.AllowResourceInjection = GUILayout.Toggle(ModState.AllowResourceInjection, "Allow Resource Injection", toggleStyle);
 
 			GUILayout.Space(10f);
 			GUILayout.BeginHorizontal();
 			DrawStyledToggle("Strategic", icoStrat, ref ModState.FillStrategic);
 			DrawStyledToggle("Luxury", icoLux, ref ModState.FillLuxury);
-			DrawStyledToggle("Specials", icoSpec, ref ModState.FillSpecials);
+			DrawStyledToggle("Add Gold", icoDust, ref ModState.AddGold);
+			DrawStyledToggle("Add Influence", icoInf, ref ModState.AddInfluence);
+			GUILayout.EndHorizontal();
+
+			GUILayout.Space(6f);
+			GUILayout.BeginHorizontal();
+			DrawStyledToggle("Special 26", icoSpec, ref ModState.FillSpecial26);
+			DrawStyledToggle("Special 27", icoSpec, ref ModState.FillSpecial27);
+			DrawStyledToggle("Special 28", icoSpec, ref ModState.FillSpecial28);
+			DrawStyledToggle("Special 29", icoSpec, ref ModState.FillSpecial29);
+			GUILayout.EndHorizontal();
+
+			GUILayout.Space(6f);
+			GUILayout.BeginHorizontal();
+			DrawStyledToggle("Special 30", icoSpec, ref ModState.FillSpecial30);
+			DrawStyledToggle("Special 31", icoSpec, ref ModState.FillSpecial31);
+			DrawStyledToggle("Special 32", icoSpec, ref ModState.FillSpecial32);
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(15f);
 			if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(40f)))
 			{
-				if (ModState.AllowResourceInjection && OwnershipResolver.AnyTargetSelected())
+				if (OwnershipResolver.AnyTargetSelected())
 				{
 					ResourceInjector.TryAddResources();
 				}
 				else
 				{
-					ModLog.Warn($"ADD RESOURCES NOW blocked. AllowResourceInjection={ModState.AllowResourceInjection}, AnyTargetSelected={OwnershipResolver.AnyTargetSelected()}");
+					ModLog.Warn("ADD RESOURCES NOW blocked: no target empires selected.");
 				}
 			}
 
 			GUILayout.EndVertical();
 			GUILayout.FlexibleSpace();
-			GUILayout.Label("Press Home / F8 / INSERT / F10 to hide", sliderLabelStyle);
 			GUI.DragWindow();
 		}
 
@@ -137,10 +143,10 @@ namespace EL2_cheat_engine
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("EL2 Cheat Engine", titleStyle);
-			string arrow = expanded ? "\u25bc" : "\u25b2";
-			if (GUILayout.Button(arrow, buttonStyle, GUILayout.Width(36f), GUILayout.Height(28f)))
+			if (GUILayout.Button("\u25b2", buttonStyle, GUILayout.Width(36f), GUILayout.Height(28f)))
 			{
-				expanded = !expanded;
+				ModState.MenuExpanded = false;
+				ModLog.Info("Menu collapsed from header button.");
 			}
 			GUILayout.EndHorizontal();
 		}
@@ -198,7 +204,7 @@ namespace EL2_cheat_engine
 			GUILayout.Space(5f);
 			toggle = GUILayout.Toggle(toggle, label, toggleStyle, GUILayout.Width(80f));
 			GUI.enabled = toggle;
-			value = GUILayout.HorizontalSlider(value, 1f, max);
+			value = GUILayout.HorizontalSlider(value, Config.SliderMin, max);
 			GUILayout.Label($"x{(int)value}", sliderLabelStyle, GUILayout.Width(45f));
 			GUI.enabled = true;
 			GUILayout.EndHorizontal();
@@ -207,7 +213,7 @@ namespace EL2_cheat_engine
 
 		private void DrawStyledToggle(string label, Texture2D icon, ref bool toggle)
 		{
-			GUILayout.BeginHorizontal(GUILayout.Width(110f));
+			GUILayout.BeginHorizontal(GUILayout.Width(125f));
 			if ((bool)icon)
 			{
 				GUI.DrawTexture(GUILayoutUtility.GetRect(14f, 14f, GUILayout.Width(14f)), icon);
@@ -295,16 +301,6 @@ namespace EL2_cheat_engine
 				{
 					fontSize = 12,
 					alignment = TextAnchor.MiddleRight,
-					normal = { textColor = Color.yellow }
-				};
-			}
-
-			if (debugLabelStyle == null)
-			{
-				debugLabelStyle = new GUIStyle(labelBase)
-				{
-					fontSize = 14,
-					fontStyle = FontStyle.Bold,
 					normal = { textColor = Color.yellow }
 				};
 			}

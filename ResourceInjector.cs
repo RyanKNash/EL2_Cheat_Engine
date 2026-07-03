@@ -12,12 +12,6 @@ namespace EL2_cheat_engine
 		{
 			try
 			{
-				if (!ModState.AllowResourceInjection)
-				{
-					ModLog.Warn("Resource injection blocked: AllowResourceInjection is false.");
-					return;
-				}
-
 				if (!OwnershipResolver.AnyTargetSelected())
 				{
 					ModLog.Warn("Resource injection blocked: no target empires selected.");
@@ -70,7 +64,9 @@ namespace EL2_cheat_engine
 
 					appliedToAnyEmpire = true;
 					ModLog.Info($"Resource injection selected target empire index {empireIndex}");
-					ProcessEmpire(enumType, empire, empireIndex);
+					ProcessEmpireResources(enumType, empire, empireIndex);
+					AddCurrentStock(empire, empireIndex, ModState.AddGold, "money", new string[3] { "MoneyStock", "DustStock", "GoldStock" });
+					AddCurrentStock(empire, empireIndex, ModState.AddInfluence, "influence", new string[1] { "InfluenceStock" });
 				}
 
 				if (!appliedToAnyEmpire)
@@ -84,7 +80,7 @@ namespace EL2_cheat_engine
 			}
 		}
 
-		private static void ProcessEmpire(Type enumType, object empire, int empireIndex)
+		private static void ProcessEmpireResources(Type enumType, object empire, int empireIndex)
 		{
 			Traverse traverse = Traverse.Create(empire);
 			object departmentOfResources = traverse.Field("DepartmentOfResources").GetValue();
@@ -97,12 +93,11 @@ namespace EL2_cheat_engine
 			MethodInfo giveMethod = AccessTools.Method(departmentOfResources.GetType(), "GiveGodAccessToResource");
 			if (giveMethod != null)
 			{
-				for (int i = 0; i < 32; i++)
+				for (int i = 0; i <= 32; i++)
 				{
 					if (ShouldFill(i))
 					{
-						object resourceType = Enum.ToObject(enumType, i);
-						giveMethod.Invoke(departmentOfResources, new object[2] { resourceType, ModState.ResourceAmount });
+						TryGiveResource(enumType, giveMethod, departmentOfResources, i, empireIndex);
 					}
 				}
 
@@ -110,19 +105,196 @@ namespace EL2_cheat_engine
 				return;
 			}
 
-			for (int j = 1; j <= 32; j++)
+			for (int i = 0; i <= 32; i++)
 			{
-				if (ShouldFill(j - 1))
+				if (ShouldFill(i))
 				{
-					object stock = traverse.Field($"Resource{j:00}Stock").GetValue();
-					if (stock != null)
-					{
-						Traverse.Create(stock).Property("Value").SetValue((FixedPoint)ModState.ResourceAmount);
-					}
+					TrySetResourceStock(traverse, i, empireIndex);
 				}
 			}
 
 			ModLog.Info($"Resource injection completed for empire index {empireIndex} using stock fields.");
+		}
+
+		private static void TryGiveResource(Type enumType, MethodInfo giveMethod, object departmentOfResources, int resourceIndex, int empireIndex)
+		{
+			try
+			{
+				object resourceType = Enum.ToObject(enumType, resourceIndex);
+				giveMethod.Invoke(departmentOfResources, new object[2] { resourceType, ModState.ResourceAmount });
+			}
+			catch (Exception ex)
+			{
+				ModLog.Warn($"Resource injection failed for empire index {empireIndex}, resource index {resourceIndex}: {ex.Message}");
+			}
+		}
+
+		private static void TrySetResourceStock(Traverse traverse, int resourceIndex, int empireIndex)
+		{
+			string stockName = $"Resource{resourceIndex + 1:00}Stock";
+			object stock = traverse.Field(stockName).GetValue();
+			if (stock == null)
+			{
+				ModLog.Warn($"Resource injection could not find {stockName} for empire index {empireIndex}.");
+				return;
+			}
+
+			if (!TryIncreaseValueMember(stock, "Value", ModState.ResourceAmount))
+			{
+				ModLog.Warn($"Resource injection could not update {stockName}.Value for empire index {empireIndex}.");
+			}
+		}
+
+		private static void AddCurrentStock(object empire, int empireIndex, bool enabled, string label, string[] memberNames)
+		{
+			if (!enabled)
+			{
+				return;
+			}
+
+			foreach (string memberName in memberNames)
+			{
+				if (TryIncreaseStockMember(empire, memberName, ModState.ResourceAmount))
+				{
+					ModLog.Info($"Resource injection added {ModState.ResourceAmount} {label} to target empire index {empireIndex} via {memberName}.");
+					return;
+				}
+			}
+
+			ModLog.Warn($"Resource injection could not find writable {label} stock for target empire index {empireIndex}.");
+		}
+
+		private static bool TryIncreaseStockMember(object owner, string memberName, int amount)
+		{
+			if (owner == null)
+			{
+				return false;
+			}
+
+			Type type = owner.GetType();
+			FieldInfo field = AccessTools.Field(type, memberName);
+			if (field != null)
+			{
+				object value = field.GetValue(owner);
+				if (TryIncreaseEditableValue(value, amount))
+				{
+					return true;
+				}
+
+				if (!field.IsInitOnly && TryAddAmount(value, field.FieldType, amount, out object updatedValue))
+				{
+					field.SetValue(owner, updatedValue);
+					return true;
+				}
+			}
+
+			PropertyInfo property = AccessTools.Property(type, memberName);
+			if (property != null)
+			{
+				object value = property.GetValue(owner, null);
+				if (TryIncreaseEditableValue(value, amount))
+				{
+					return true;
+				}
+
+				if (property.CanWrite && TryAddAmount(value, property.PropertyType, amount, out object updatedValue))
+				{
+					property.SetValue(owner, updatedValue, null);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool TryIncreaseEditableValue(object stock, int amount)
+		{
+			return stock != null && TryIncreaseValueMember(stock, "Value", amount);
+		}
+
+		private static bool TryIncreaseValueMember(object owner, string memberName, int amount)
+		{
+			if (owner == null)
+			{
+				return false;
+			}
+
+			Type type = owner.GetType();
+			PropertyInfo property = AccessTools.Property(type, memberName);
+			if (property != null && property.CanWrite)
+			{
+				object currentValue = property.GetValue(owner, null);
+				if (TryAddAmount(currentValue, property.PropertyType, amount, out object updatedValue))
+				{
+					property.SetValue(owner, updatedValue, null);
+					return true;
+				}
+			}
+
+			FieldInfo field = AccessTools.Field(type, memberName);
+			if (field != null && !field.IsInitOnly)
+			{
+				object currentValue = field.GetValue(owner);
+				if (TryAddAmount(currentValue, field.FieldType, amount, out object updatedValue))
+				{
+					field.SetValue(owner, updatedValue);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool TryAddAmount(object currentValue, Type valueType, int amount, out object updatedValue)
+		{
+			updatedValue = null;
+			Type targetType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+
+			try
+			{
+				if (targetType == typeof(FixedPoint))
+				{
+					FixedPoint current = currentValue is FixedPoint fixedPoint ? fixedPoint : (FixedPoint)0;
+					updatedValue = current + (FixedPoint)amount;
+					return true;
+				}
+
+				if (targetType == typeof(int))
+				{
+					updatedValue = (currentValue is int current ? current : 0) + amount;
+					return true;
+				}
+
+				if (targetType == typeof(long))
+				{
+					updatedValue = (currentValue is long current ? current : 0L) + amount;
+					return true;
+				}
+
+				if (targetType == typeof(float))
+				{
+					updatedValue = (currentValue is float current ? current : 0f) + amount;
+					return true;
+				}
+
+				if (targetType == typeof(double))
+				{
+					updatedValue = (currentValue is double current ? current : 0d) + amount;
+					return true;
+				}
+
+				if (targetType == typeof(decimal))
+				{
+					updatedValue = (currentValue is decimal current ? current : 0m) + amount;
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				ModLog.Warn($"Could not add amount to {valueType.FullName}: {ex.Message}");
+			}
+
+			return false;
 		}
 
 		private static object ReadStaticMember(Type type, string name)
@@ -167,10 +339,33 @@ namespace EL2_cheat_engine
 
 			if (index >= 26)
 			{
-				return ModState.FillSpecials;
+				return ShouldFillSpecial(index);
 			}
 
 			return ModState.FillLuxury;
+		}
+
+		private static bool ShouldFillSpecial(int index)
+		{
+			switch (index)
+			{
+				case 26:
+					return ModState.FillSpecial26;
+				case 27:
+					return ModState.FillSpecial27;
+				case 28:
+					return ModState.FillSpecial28;
+				case 29:
+					return ModState.FillSpecial29;
+				case 30:
+					return ModState.FillSpecial30;
+				case 31:
+					return ModState.FillSpecial31;
+				case 32:
+					return ModState.FillSpecial32;
+				default:
+					return false;
+			}
 		}
 	}
 }

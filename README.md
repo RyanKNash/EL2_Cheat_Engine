@@ -5,21 +5,18 @@ A BepInEx mod for Endless Legend 2 that adds an in-game cheat menu for yield mul
 ## How to use
 
 1. Install the mod and start Endless Legend 2.
-2. Open or hide the cheat menu with any of these keys:
-   - `Insert`
-   - `F10`
-   - `Home`
-   - `F8`
-3. Select one or more target empires at the top of the menu.
+2. Use the arrow button in the menu header to collapse the cheat menu.
+3. When collapsed, click the small down-arrow button in the corner to reopen it.
+4. Select one or more target empires at the top of the menu.
    - `Player` is empire index `0`.
    - `AI 1` through `AI 6` are the other supported empire slots.
-4. Enable the yield cheats you want, then set the multiplier sliders.
+5. Enable the yield cheats you want, then set the multiplier sliders.
    - Dust
    - Industry
    - Science
    - Influence
    - Fame
-5. For resources, set an amount, choose resource groups, enable `Allow Resource Injection`, then press `ADD RESOURCES NOW`.
+6. For resources, set an amount, choose resource groups, enable `Allow Resource Injection`, then press `ADD RESOURCES NOW`.
 
 Yield multipliers only apply to selected target empires. Resource injection is also blocked unless at least one target empire is selected and `Allow Resource Injection` is enabled.
 
@@ -34,17 +31,13 @@ Endless Legend 2/BepInEx/plugins/
 ```
 
 4. Launch the game.
-5. Confirm the mod loaded by looking for the yellow on-screen text:
-
-```text
-EL2 Cheat Engine loaded - Press Home/F8/Insert/F10
-```
-
-If the menu is hidden, click `Open EL2CE` or press one of the toggle keys.
+5. The cheat menu opens expanded by default. If it is collapsed, click the small down-arrow button in the corner to reopen it.
 
 ## Features
 
 - In-game draggable IMGUI menu.
+- Button-only menu collapse and reopen behavior.
+- Collapsed mode draws only a small reopen button so game clicks are not blocked behind the old window area.
 - Per-empire targeting for up to seven empire slots.
 - Toggleable yield multipliers for:
   - Dust
@@ -110,4 +103,3 @@ If resource injection does nothing:
 ## Repository notes
 
 Game assemblies, build output, and local BepInEx files are ignored by `.gitignore`. Public releases should include only the compiled mod DLL and any release notes needed by users.
-
