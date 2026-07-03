@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace EL2_cheat_engine
 {
-	[BepInPlugin("com.yourname.el2_cheat_engine", "EL2 Cheat Engine", "1.3.0")]
+	[BepInPlugin("com.yourname.el2_cheat_engine", "EL2 Cheat Engine", "1.0.0")]
 	public class Plugin : BaseUnityPlugin
 	{
 		private readonly GuiRenderer guiRenderer = new GuiRenderer();
@@ -19,7 +19,7 @@ namespace EL2_cheat_engine
 		{
 			ModLog.Info("Start() ran");
 			ModState.MenuExpanded = true;
-			guiRenderer.Initialize(new Rect(50f, 80f, 580f, 640f));
+			guiRenderer.Initialize(GuiConfig.InitialWindowRect);
 		}
 
 		private void OnGUI()
@@ -28,4 +28,5 @@ namespace EL2_cheat_engine
 		}
 	}
 }
+
 

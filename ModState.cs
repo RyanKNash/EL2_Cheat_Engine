@@ -30,19 +30,11 @@ namespace EL2_cheat_engine
 
 		public static bool FillLuxury = false;
 
-		public static bool FillSpecial26 = false;
+		public static bool FillSpecial26 = false; // Corpses
 
-		public static bool FillSpecial27 = false;
-
-		public static bool FillSpecial28 = false;
-
-		public static bool FillSpecial29 = false;
-
-		public static bool FillSpecial30 = false;
-
-		public static bool FillSpecial31 = false;
-
-		public static bool FillSpecial32 = false;
+		// Special 27 maps to Fallen Spirits. It is not currently used in gameplay,
+		// so keep this disabled until the game exposes a real use for it.
+		// public static bool FillSpecial27 = false;
 
 		public static bool AddGold = false;
 
@@ -53,3 +45,4 @@ namespace EL2_cheat_engine
 		public static bool[] TargetPlayers = new bool[7];
 	}
 }
+

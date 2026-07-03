@@ -349,23 +349,14 @@ namespace EL2_cheat_engine
 		{
 			switch (index)
 			{
-				case 26:
+				case 26: // Corpses
 					return ModState.FillSpecial26;
-				case 27:
-					return ModState.FillSpecial27;
-				case 28:
-					return ModState.FillSpecial28;
-				case 29:
-					return ModState.FillSpecial29;
-				case 30:
-					return ModState.FillSpecial30;
-				case 31:
-					return ModState.FillSpecial31;
-				case 32:
-					return ModState.FillSpecial32;
+				// case 27: // Fallen Spirits, not currently used in gameplay.
+				// 	return ModState.FillSpecial27;
 				default:
 					return false;
 			}
 		}
 	}
 }
+

@@ -4,8 +4,6 @@ namespace EL2_cheat_engine
 {
 	public sealed class GuiRenderer
 	{
-		private static readonly Rect ReopenButtonRect = new Rect(10f, 10f, 34f, 30f);
-
 		private Rect windowRect;
 		private bool loggedOnGuiFirstRun;
 
@@ -46,7 +44,7 @@ namespace EL2_cheat_engine
 
 			if (!ModState.MenuExpanded)
 			{
-				if (GUI.Button(ReopenButtonRect, "\u25bc", buttonStyle))
+				if (GUI.Button(GuiConfig.ReopenButtonRect, "\u25bc", buttonStyle))
 				{
 					ModState.MenuExpanded = true;
 					ModLog.Info("Menu expanded from reopen button.");
@@ -74,13 +72,13 @@ namespace EL2_cheat_engine
 			EnsureInitialized();
 			DrawHeader();
 
-			GUILayout.Space(15f);
+			GUILayout.Space(GuiConfig.SectionSpacing);
 			GUILayout.Label("Target Empires", headerStyle);
 			GUILayout.BeginVertical("box");
 			DrawTargetButtons();
 			GUILayout.EndVertical();
 
-			GUILayout.Space(15f);
+			GUILayout.Space(GuiConfig.SectionSpacing);
 			GUILayout.Label("Yield Multipliers", headerStyle);
 			GUILayout.BeginVertical("box");
 			DrawStyledSlider("Dust", icoDust, ref ModState.EnableMoney, ref ModState.MoneyMult, Config.MoneyMultiplierMax);
@@ -90,15 +88,15 @@ namespace EL2_cheat_engine
 			DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
 			GUILayout.EndVertical();
 
-			GUILayout.Space(20f);
+			GUILayout.Space(GuiConfig.ResourceSectionSpacing);
 			GUILayout.Label("Resource Injection", headerStyle);
 			GUILayout.BeginVertical("box");
 			GUILayout.BeginHorizontal();
-			GUILayout.Label($"Amount: {ModState.ResourceAmount}", GUILayout.Width(100f));
+			GUILayout.Label($"Amount: {ModState.ResourceAmount}", GUILayout.Width(GuiConfig.ResourceAmountLabelWidth));
 			ModState.ResourceAmount = (int)GUILayout.HorizontalSlider(ModState.ResourceAmount, Config.ResourceAmountMin, Config.ResourceAmountMax);
 			GUILayout.EndHorizontal();
 
-			GUILayout.Space(10f);
+			GUILayout.Space(GuiConfig.ResourceToggleSpacing);
 			GUILayout.BeginHorizontal();
 			DrawStyledToggle("Strategic", icoStrat, ref ModState.FillStrategic);
 			DrawStyledToggle("Luxury", icoLux, ref ModState.FillLuxury);
@@ -106,23 +104,13 @@ namespace EL2_cheat_engine
 			DrawStyledToggle("Add Influence", icoInf, ref ModState.AddInfluence);
 			GUILayout.EndHorizontal();
 
-			GUILayout.Space(6f);
+			GUILayout.Space(GuiConfig.SpecialToggleSpacing);
 			GUILayout.BeginHorizontal();
-			DrawStyledToggle("Special 26", icoSpec, ref ModState.FillSpecial26);
-			DrawStyledToggle("Special 27", icoSpec, ref ModState.FillSpecial27);
-			DrawStyledToggle("Special 28", icoSpec, ref ModState.FillSpecial28);
-			DrawStyledToggle("Special 29", icoSpec, ref ModState.FillSpecial29);
+			DrawStyledToggle("Corpses", icoSpec, ref ModState.FillSpecial26);
 			GUILayout.EndHorizontal();
 
-			GUILayout.Space(6f);
-			GUILayout.BeginHorizontal();
-			DrawStyledToggle("Special 30", icoSpec, ref ModState.FillSpecial30);
-			DrawStyledToggle("Special 31", icoSpec, ref ModState.FillSpecial31);
-			DrawStyledToggle("Special 32", icoSpec, ref ModState.FillSpecial32);
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(15f);
-			if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(40f)))
+			GUILayout.Space(GuiConfig.SectionSpacing);
+			if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(GuiConfig.AddResourcesButtonHeight)))
 			{
 				if (OwnershipResolver.AnyTargetSelected())
 				{
@@ -143,7 +131,7 @@ namespace EL2_cheat_engine
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("EL2 Cheat Engine", titleStyle);
-			if (GUILayout.Button("\u25b2", buttonStyle, GUILayout.Width(36f), GUILayout.Height(28f)))
+			if (GUILayout.Button("\u25b2", buttonStyle, GUILayout.Width(GuiConfig.HeaderButtonWidth), GUILayout.Height(GuiConfig.HeaderButtonHeight)))
 			{
 				ModState.MenuExpanded = false;
 				ModLog.Info("Menu collapsed from header button.");
@@ -158,7 +146,7 @@ namespace EL2_cheat_engine
 			{
 				bool selected = ModState.TargetPlayers[i];
 				GUIStyle style = selected ? targetButtonStyle : GUI.skin.button;
-				if (GUILayout.Button(OwnershipResolver.GetPlayerLabel(i), style, GUILayout.Width(58f), GUILayout.Height(28f)))
+				if (GUILayout.Button(OwnershipResolver.GetPlayerLabel(i), style, GUILayout.Width(GuiConfig.TargetButtonWidth), GUILayout.Height(GuiConfig.TargetButtonHeight)))
 				{
 					ModState.TargetPlayers[i] = !selected;
 					LogSelectedTargets();
@@ -198,25 +186,25 @@ namespace EL2_cheat_engine
 			GUILayout.BeginHorizontal();
 			if ((bool)icon)
 			{
-				GUI.DrawTexture(GUILayoutUtility.GetRect(16f, 16f, GUILayout.Width(16f)), icon);
+				GUI.DrawTexture(GUILayoutUtility.GetRect(GuiConfig.SliderIconSize, GuiConfig.SliderIconSize, GUILayout.Width(GuiConfig.SliderIconSize)), icon);
 			}
 
-			GUILayout.Space(5f);
-			toggle = GUILayout.Toggle(toggle, label, toggleStyle, GUILayout.Width(80f));
+			GUILayout.Space(GuiConfig.SliderIconSpacing);
+			toggle = GUILayout.Toggle(toggle, label, toggleStyle, GUILayout.Width(GuiConfig.SliderToggleWidth));
 			GUI.enabled = toggle;
 			value = GUILayout.HorizontalSlider(value, Config.SliderMin, max);
-			GUILayout.Label($"x{(int)value}", sliderLabelStyle, GUILayout.Width(45f));
+			GUILayout.Label($"x{(int)value}", sliderLabelStyle, GUILayout.Width(GuiConfig.SliderValueWidth));
 			GUI.enabled = true;
 			GUILayout.EndHorizontal();
-			GUILayout.Space(4f);
+			GUILayout.Space(GuiConfig.SliderRowSpacing);
 		}
 
 		private void DrawStyledToggle(string label, Texture2D icon, ref bool toggle)
 		{
-			GUILayout.BeginHorizontal(GUILayout.Width(125f));
+			GUILayout.BeginHorizontal(GUILayout.Width(GuiConfig.ToggleRowWidth));
 			if ((bool)icon)
 			{
-				GUI.DrawTexture(GUILayoutUtility.GetRect(14f, 14f, GUILayout.Width(14f)), icon);
+				GUI.DrawTexture(GUILayoutUtility.GetRect(GuiConfig.ToggleIconSize, GuiConfig.ToggleIconSize, GUILayout.Width(GuiConfig.ToggleIconSize)), icon);
 			}
 
 			toggle = GUILayout.Toggle(toggle, label, toggleStyle);
@@ -225,17 +213,17 @@ namespace EL2_cheat_engine
 
 		private void EnsureInitialized()
 		{
-			if (bgTexture == null) bgTexture = TextureFactory.MakeTex(2, 2, new Color(0.08f, 0.1f, 0.15f, 0.95f));
-			if (btnTexture == null) btnTexture = TextureFactory.MakeTex(2, 2, new Color(0f, 0.45f, 0.65f, 1f));
-			if (btnHoverTexture == null) btnHoverTexture = TextureFactory.MakeTex(2, 2, new Color(0f, 0.55f, 0.75f, 1f));
-			if (icoDust == null) icoDust = TextureFactory.MakeTex(12, 12, new Color(1f, 0.84f, 0f));
-			if (icoInd == null) icoInd = TextureFactory.MakeTex(12, 12, new Color(1f, 0.5f, 0f));
-			if (icoSci == null) icoSci = TextureFactory.MakeTex(12, 12, new Color(0f, 0.8f, 1f));
-			if (icoInf == null) icoInf = TextureFactory.MakeTex(12, 12, new Color(0.7f, 0f, 1f));
-			if (icoFame == null) icoFame = TextureFactory.MakeTex(12, 12, Color.white);
-			if (icoStrat == null) icoStrat = TextureFactory.MakeTex(12, 12, Color.gray);
-			if (icoLux == null) icoLux = TextureFactory.MakeTex(12, 12, Color.green);
-			if (icoSpec == null) icoSpec = TextureFactory.MakeTex(12, 12, new Color(0.8f, 0.2f, 0.2f));
+			if (bgTexture == null) bgTexture = TextureFactory.MakeTex(GuiConfig.TextureSize, GuiConfig.TextureSize, GuiConfig.WindowBackgroundColor);
+			if (btnTexture == null) btnTexture = TextureFactory.MakeTex(GuiConfig.TextureSize, GuiConfig.TextureSize, GuiConfig.ButtonColor);
+			if (btnHoverTexture == null) btnHoverTexture = TextureFactory.MakeTex(GuiConfig.TextureSize, GuiConfig.TextureSize, GuiConfig.ButtonHoverColor);
+			if (icoDust == null) icoDust = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.DustIconColor);
+			if (icoInd == null) icoInd = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.IndustryIconColor);
+			if (icoSci == null) icoSci = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.ScienceIconColor);
+			if (icoInf == null) icoInf = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.InfluenceIconColor);
+			if (icoFame == null) icoFame = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.FameIconColor);
+			if (icoStrat == null) icoStrat = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.StrategicIconColor);
+			if (icoLux == null) icoLux = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.LuxuryIconColor);
+			if (icoSpec == null) icoSpec = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.SpecialIconColor);
 
 			GUIStyle labelBase = GUI.skin != null && GUI.skin.label != null ? GUI.skin.label : GUIStyle.none;
 			GUIStyle buttonBase = GUI.skin != null && GUI.skin.button != null ? GUI.skin.button : GUIStyle.none;
@@ -245,10 +233,10 @@ namespace EL2_cheat_engine
 			{
 				titleStyle = new GUIStyle(labelBase)
 				{
-					fontSize = 18,
+					fontSize = GuiConfig.TitleFontSize,
 					fontStyle = FontStyle.Bold,
 					alignment = TextAnchor.MiddleCenter,
-					normal = { textColor = Color.white }
+					normal = { textColor = GuiConfig.TitleTextColor }
 				};
 			}
 
@@ -256,9 +244,9 @@ namespace EL2_cheat_engine
 			{
 				headerStyle = new GUIStyle(labelBase)
 				{
-					fontSize = 14,
+					fontSize = GuiConfig.HeaderFontSize,
 					fontStyle = FontStyle.Bold,
-					normal = { textColor = new Color(0.6f, 0.8f, 1f) }
+					normal = { textColor = GuiConfig.HeaderTextColor }
 				};
 			}
 
@@ -266,9 +254,9 @@ namespace EL2_cheat_engine
 			{
 				buttonStyle = new GUIStyle(buttonBase)
 				{
-					fontSize = 14,
+					fontSize = GuiConfig.ButtonFontSize,
 					fontStyle = FontStyle.Bold,
-					normal = { textColor = Color.white, background = btnTexture }
+					normal = { textColor = GuiConfig.ButtonTextColor, background = btnTexture }
 				};
 				buttonStyle.hover.background = btnHoverTexture;
 				buttonStyle.active.background = btnHoverTexture;
@@ -280,7 +268,7 @@ namespace EL2_cheat_engine
 				{
 					normal =
 					{
-						textColor = Color.white,
+						textColor = GuiConfig.ButtonTextColor,
 						background = btnHoverTexture
 					}
 				};
@@ -290,8 +278,8 @@ namespace EL2_cheat_engine
 			{
 				toggleStyle = new GUIStyle(toggleBase)
 				{
-					fontSize = 13,
-					normal = { textColor = new Color(0.9f, 0.9f, 0.9f) }
+					fontSize = GuiConfig.ToggleFontSize,
+					normal = { textColor = GuiConfig.ToggleTextColor }
 				};
 			}
 
@@ -299,9 +287,9 @@ namespace EL2_cheat_engine
 			{
 				sliderLabelStyle = new GUIStyle(labelBase)
 				{
-					fontSize = 12,
+					fontSize = GuiConfig.SliderLabelFontSize,
 					alignment = TextAnchor.MiddleRight,
-					normal = { textColor = Color.yellow }
+					normal = { textColor = GuiConfig.SliderLabelTextColor }
 				};
 			}
 		}
