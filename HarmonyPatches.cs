@@ -16,7 +16,7 @@ namespace EL2_cheat_engine
 
 		public static void Register()
 		{
-			Harmony harmony = new Harmony("com.yourname.el2_cheat_engine");
+			Harmony harmony = new Harmony("com.rknash.el2_cheat_engine");
 			PatchPostfix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfIndustry", "ComputeProductionIncome", "Patch_Industry");
 			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfTheTreasury", "GainMoney", "Patch_Money");
 			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfCulture", "GainInfluence", "Patch_Influence");

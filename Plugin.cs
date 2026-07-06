@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace EL2_cheat_engine
 {
-	[BepInPlugin("com.yourname.el2_cheat_engine", "EL2 Cheat Engine", "1.0.0")]
+	[BepInPlugin("com.rknash.el2_cheat_engine", "EL2 Cheat Engine", "1.0.0")]
 	public class Plugin : BaseUnityPlugin
 	{
 		private readonly GuiRenderer guiRenderer = new GuiRenderer();
