@@ -23,5 +23,10 @@ namespace EL2_cheat_engine
 		public const int ResourceAmountDefault = 100;
 		public const float ResourceAmountMin = 1f;
 		public const float ResourceAmountMax = 1000f;
+
+		public static readonly bool DEBUG_REFLECTION = false;
+		public static readonly bool DEBUG_MOVEMENT = false;
+		public static readonly bool DEBUG_EMPIRE = false;
+		public static readonly bool DEBUG_GODSPEED_MOVEMENT = false;
 	}
 }

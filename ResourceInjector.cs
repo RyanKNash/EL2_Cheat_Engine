@@ -12,13 +12,13 @@ namespace EL2_cheat_engine
 		{
 			try
 			{
-				if (!OwnershipResolver.AnyTargetSelected())
+				if (!EmpireHelpers.AnyTargetSelected())
 				{
 					ModLog.Warn("Resource injection blocked: no target empires selected.");
 					return;
 				}
 
-				ModLog.Info("Resource injection selected target indexes: " + GetSelectedTargetIndexesText());
+				ModLog.Info("Resource injection selected target indexes: " + EmpireHelpers.GetSelectedTargetIndexesText());
 
 				Type enumType = AccessTools.TypeByName("Amplitude.Mercury.Data.Simulation.ResourceType");
 				Type sandboxType = AccessTools.TypeByName("Amplitude.Mercury.Sandbox.Sandbox");
@@ -56,7 +56,7 @@ namespace EL2_cheat_engine
 						continue;
 					}
 
-					if (!ModState.TargetPlayers[empireIndex])
+					if (!EmpireHelpers.IsTargetEmpire(empireIndex))
 					{
 						ModLog.Debug($"Resource injection skipped untargeted empire index {empireIndex}.");
 						continue;
@@ -65,7 +65,7 @@ namespace EL2_cheat_engine
 					appliedToAnyEmpire = true;
 					ModLog.Info($"Resource injection selected target empire index {empireIndex}");
 					ProcessEmpireResources(enumType, empire, empireIndex);
-					AddCurrentStock(empire, empireIndex, ModState.AddGold, "money", new string[3] { "MoneyStock", "DustStock", "GoldStock" });
+					AddCurrentStock(empire, empireIndex, ModState.AddGold, "money", new string[1] { "MoneyStock" });
 					AddCurrentStock(empire, empireIndex, ModState.AddInfluence, "influence", new string[1] { "InfluenceStock" });
 				}
 
@@ -152,16 +152,58 @@ namespace EL2_cheat_engine
 				return;
 			}
 
+			bool foundStock = false;
 			foreach (string memberName in memberNames)
 			{
-				if (TryIncreaseStockMember(empire, memberName, ModState.ResourceAmount))
+				object stock = ReflectionHelpers.TryGetMemberValue(empire, memberName);
+				if (stock == null)
 				{
-					ModLog.Info($"Resource injection added {ModState.ResourceAmount} {label} to target empire index {empireIndex} via {memberName}.");
+					continue;
+				}
+
+				foundStock = true;
+				if (TryAddCurrentStockRaw(stock, empireIndex, label, memberName))
+				{
 					return;
 				}
 			}
 
-			ModLog.Warn($"Resource injection could not find writable {label} stock for target empire index {empireIndex}.");
+			if (!foundStock)
+			{
+				ModLog.Error($"Resource injection could not find {label} stock for target empire index {empireIndex}.");
+			}
+		}
+
+		private static bool TryAddCurrentStockRaw(object stock, int empireIndex, string label, string memberName)
+		{
+			if (!SimulationPropertyHelpers.ReadRaw(stock, out int beforeRaw))
+			{
+				ModLog.Error($"Resource injection could not read {memberName} raw value for target empire index {empireIndex}.");
+				return false;
+			}
+
+			int attemptedRaw = beforeRaw + (ModState.ResourceAmount * 1000);
+			SimulationPropertyHelpers.WriteRaw(stock, attemptedRaw);
+			int afterRaw = SimulationPropertyHelpers.ReadRaw(stock, out int rereadRaw) ? rereadRaw : beforeRaw;
+
+			if (afterRaw == beforeRaw)
+			{
+				ModLog.Warn($"Resource injection {memberName} write did nothing for target empire index {empireIndex}: before={FormatRaw(beforeRaw)} attempted={FormatRaw(attemptedRaw)} after={FormatRaw(afterRaw)}.");
+				return false;
+			}
+
+			ModLog.Info($"Resource injection added {ModState.ResourceAmount} {label} to target empire index {empireIndex} via {memberName}: before={FormatRaw(beforeRaw)} after={FormatRaw(afterRaw)}.");
+			return true;
+		}
+
+		private static string FormatRaw(int raw)
+		{
+			if (raw % 1000 == 0)
+			{
+				return (raw / 1000).ToString();
+			}
+
+			return (raw / 1000m).ToString("0.###");
 		}
 
 		private static bool TryIncreaseStockMember(object owner, string memberName, int amount)
@@ -307,27 +349,6 @@ namespace EL2_cheat_engine
 
 			PropertyInfo property = AccessTools.Property(type, name);
 			return property != null ? property.GetValue(null, null) : null;
-		}
-
-		private static string GetSelectedTargetIndexesText()
-		{
-			string selected = string.Empty;
-			for (int i = 0; i < ModState.TargetPlayers.Length; i++)
-			{
-				if (!ModState.TargetPlayers[i])
-				{
-					continue;
-				}
-
-				if (selected.Length > 0)
-				{
-					selected += ", ";
-				}
-
-				selected += i.ToString();
-			}
-
-			return selected.Length > 0 ? selected : "none";
 		}
 
 		private static bool ShouldFill(int index)

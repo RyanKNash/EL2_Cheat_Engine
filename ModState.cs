@@ -8,6 +8,8 @@ namespace EL2_cheat_engine
 
 		public static bool ResourceInjectionExpanded = false;
 
+		public static bool MovementExpanded = false;
+
 		public static float IndustryMult = Config.IndustryMultiplierDefault;
 
 		public static float MoneyMult = Config.MoneyMultiplierDefault;

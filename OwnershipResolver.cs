@@ -24,15 +24,7 @@ namespace EL2_cheat_engine
 
 		public static bool AnyTargetSelected()
 		{
-			for (int i = 0; i < ModState.TargetPlayers.Length; i++)
-			{
-				if (ModState.TargetPlayers[i])
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return EmpireHelpers.AnyTargetSelected();
 		}
 
 		public static string GetPlayerLabel(int index)
@@ -142,35 +134,7 @@ namespace EL2_cheat_engine
 
 		public static object TryGetMemberValue(object obj, string name)
 		{
-			if (obj == null || string.IsNullOrEmpty(name))
-			{
-				return null;
-			}
-
-			try
-			{
-				const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-				for (Type current = obj.GetType(); current != null; current = current.BaseType)
-				{
-					FieldInfo field = current.GetField(name, flags);
-					if (field != null)
-					{
-						return field.GetValue(obj);
-					}
-
-					PropertyInfo property = current.GetProperty(name, flags);
-					if (property != null && property.GetIndexParameters().Length == 0)
-					{
-						return property.GetValue(obj, null);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				LogReflectionErrorOnce(ex);
-			}
-
-			return null;
+			return ReflectionHelpers.TryGetMemberValue(obj, name);
 		}
 
 		public static int ResolveEmpireIndex(object obj)
@@ -487,7 +451,7 @@ namespace EL2_cheat_engine
 
 		public static bool IsIntegerValue(object value)
 		{
-			return value is int || value is short || value is long || value is byte;
+			return ReflectionHelpers.IsIntegerValue(value);
 		}
 
 		private static bool IsIndexLikeName(string name)

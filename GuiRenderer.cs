@@ -118,7 +118,7 @@ namespace EL2_cheat_engine
 				GUILayout.Space(GuiConfig.SectionSpacing);
 				if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(GuiConfig.AddResourcesButtonHeight)))
 				{
-					if (OwnershipResolver.AnyTargetSelected())
+					if (EmpireHelpers.AnyTargetSelected())
 					{
 						ResourceInjector.TryAddResources();
 					}
@@ -126,6 +126,18 @@ namespace EL2_cheat_engine
 					{
 						ModLog.Warn("ADD RESOURCES NOW blocked: no target empires selected.");
 					}
+				}
+
+				GUILayout.EndVertical();
+			}
+
+			GUILayout.Space(GuiConfig.ResourceSectionSpacing);
+			if (DrawDropdownHeader("Movement", ref ModState.MovementExpanded))
+			{
+				GUILayout.BeginVertical("box");
+				if (GUILayout.Button("Refill Movement Points", buttonStyle, GUILayout.Height(GuiConfig.AddResourcesButtonHeight)))
+				{
+					MovementCheats.RefillMovement();
 				}
 
 				GUILayout.EndVertical();
@@ -213,7 +225,7 @@ namespace EL2_cheat_engine
 			toggle = GUILayout.Toggle(toggle, label, toggleStyle, GUILayout.Width(GuiConfig.SliderToggleWidth));
 			GUI.enabled = toggle;
 			value = GUILayout.HorizontalSlider(value, Config.SliderMin, max);
-			GUILayout.Label($"x{(int)value}", sliderLabelStyle, GUILayout.Width(GuiConfig.SliderValueWidth));
+			GUILayout.Label(toggle ? $"x{(int)value}" : "OFF", sliderLabelStyle, GUILayout.Width(GuiConfig.SliderValueWidth));
 			GUI.enabled = true;
 			GUILayout.EndHorizontal();
 			GUILayout.Space(GuiConfig.SliderRowSpacing);
