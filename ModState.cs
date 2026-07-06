@@ -4,6 +4,10 @@ namespace EL2_cheat_engine
 	{
 		public static bool MenuExpanded = true;
 
+		public static bool SliderSectionExpanded = true;
+
+		public static bool ResourceInjectionExpanded = false;
+
 		public static float IndustryMult = Config.IndustryMultiplierDefault;
 
 		public static float MoneyMult = Config.MoneyMultiplierDefault;

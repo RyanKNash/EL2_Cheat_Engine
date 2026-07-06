@@ -10,6 +10,7 @@ namespace EL2_cheat_engine
 		private GUIStyle titleStyle;
 		private GUIStyle headerStyle;
 		private GUIStyle buttonStyle;
+		private GUIStyle dropdownHeaderStyle;
 		private GUIStyle targetButtonStyle;
 		private GUIStyle toggleStyle;
 		private GUIStyle sliderLabelStyle;
@@ -80,51 +81,56 @@ namespace EL2_cheat_engine
 			GUILayout.EndVertical();
 
 			GUILayout.Space(GuiConfig.SectionSpacing);
-			GUILayout.Label("Yield Multipliers", headerStyle);
-			GUILayout.BeginVertical("box");
-			DrawStyledSlider("Dust", icoDust, ref ModState.EnableMoney, ref ModState.MoneyMult, Config.MoneyMultiplierMax);
-			DrawStyledSlider("Industry", icoInd, ref ModState.EnableIndustry, ref ModState.IndustryMult, Config.IndustryMultiplierMax);
-			DrawStyledSlider("Science", icoSci, ref ModState.EnableScience, ref ModState.ScienceMult, Config.ScienceMultiplierMax);
-			DrawStyledSlider("Influence", icoInf, ref ModState.EnableInfluence, ref ModState.InfluenceMult, Config.InfluenceMultiplierMax);
-			// Fame is not currently in use.
-			// DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
-			GUILayout.EndVertical();
-
-			GUILayout.Space(GuiConfig.ResourceSectionSpacing);
-			GUILayout.Label("Resource Injection", headerStyle);
-			GUILayout.BeginVertical("box");
-			GUILayout.BeginHorizontal();
-			GUILayout.Label($"Amount: {ModState.ResourceAmount}", GUILayout.Width(GuiConfig.ResourceAmountLabelWidth));
-			ModState.ResourceAmount = (int)GUILayout.HorizontalSlider(ModState.ResourceAmount, Config.ResourceAmountMin, Config.ResourceAmountMax);
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(GuiConfig.ResourceToggleSpacing);
-			GUILayout.BeginHorizontal();
-			DrawStyledToggle("Strategic", icoStrat, ref ModState.FillStrategic);
-			DrawStyledToggle("Luxury", icoLux, ref ModState.FillLuxury);
-			DrawStyledToggle("Add Gold", icoDust, ref ModState.AddGold);
-			DrawStyledToggle("Add Influence", icoInf, ref ModState.AddInfluence);
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(GuiConfig.SpecialToggleSpacing);
-			GUILayout.BeginHorizontal();
-			DrawStyledToggle("Corpses", icoSpec, ref ModState.FillSpecial26);
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(GuiConfig.SectionSpacing);
-			if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(GuiConfig.AddResourcesButtonHeight)))
+			if (DrawDropdownHeader("Yield Multipliers", ref ModState.SliderSectionExpanded))
 			{
-				if (OwnershipResolver.AnyTargetSelected())
-				{
-					ResourceInjector.TryAddResources();
-				}
-				else
-				{
-					ModLog.Warn("ADD RESOURCES NOW blocked: no target empires selected.");
-				}
+				GUILayout.BeginVertical("box");
+				DrawStyledSlider("Dust", icoDust, ref ModState.EnableMoney, ref ModState.MoneyMult, Config.MoneyMultiplierMax);
+				DrawStyledSlider("Industry", icoInd, ref ModState.EnableIndustry, ref ModState.IndustryMult, Config.IndustryMultiplierMax);
+				DrawStyledSlider("Science", icoSci, ref ModState.EnableScience, ref ModState.ScienceMult, Config.ScienceMultiplierMax);
+				DrawStyledSlider("Influence", icoInf, ref ModState.EnableInfluence, ref ModState.InfluenceMult, Config.InfluenceMultiplierMax);
+				// Fame is not currently in use.
+				// DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
+				GUILayout.EndVertical();
 			}
 
-			GUILayout.EndVertical();
+			GUILayout.Space(GuiConfig.ResourceSectionSpacing);
+			if (DrawDropdownHeader("Resource Injection", ref ModState.ResourceInjectionExpanded))
+			{
+				GUILayout.BeginVertical("box");
+				GUILayout.BeginHorizontal();
+				GUILayout.Label($"Amount: {ModState.ResourceAmount}", GUILayout.Width(GuiConfig.ResourceAmountLabelWidth));
+				ModState.ResourceAmount = (int)GUILayout.HorizontalSlider(ModState.ResourceAmount, Config.ResourceAmountMin, Config.ResourceAmountMax);
+				GUILayout.EndHorizontal();
+
+				GUILayout.Space(GuiConfig.ResourceToggleSpacing);
+				GUILayout.BeginHorizontal();
+				DrawStyledToggle("Strategic", icoStrat, ref ModState.FillStrategic);
+				DrawStyledToggle("Luxury", icoLux, ref ModState.FillLuxury);
+				DrawStyledToggle("Add Gold", icoDust, ref ModState.AddGold);
+				DrawStyledToggle("Add Influence", icoInf, ref ModState.AddInfluence);
+				GUILayout.EndHorizontal();
+
+				GUILayout.Space(GuiConfig.SpecialToggleSpacing);
+				GUILayout.BeginHorizontal();
+				DrawStyledToggle("Corpses", icoSpec, ref ModState.FillSpecial26);
+				GUILayout.EndHorizontal();
+
+				GUILayout.Space(GuiConfig.SectionSpacing);
+				if (GUILayout.Button("ADD RESOURCES NOW", buttonStyle, GUILayout.Height(GuiConfig.AddResourcesButtonHeight)))
+				{
+					if (OwnershipResolver.AnyTargetSelected())
+					{
+						ResourceInjector.TryAddResources();
+					}
+					else
+					{
+						ModLog.Warn("ADD RESOURCES NOW blocked: no target empires selected.");
+					}
+				}
+
+				GUILayout.EndVertical();
+			}
+
 			GUILayout.FlexibleSpace();
 			GUI.DragWindow();
 		}
@@ -139,6 +145,18 @@ namespace EL2_cheat_engine
 				ModLog.Info("Menu collapsed from header button.");
 			}
 			GUILayout.EndHorizontal();
+		}
+
+		private bool DrawDropdownHeader(string label, ref bool expanded)
+		{
+			string arrow = expanded ? "\u25bc" : "\u25b6";
+			if (GUILayout.Button(arrow + " " + label, dropdownHeaderStyle, GUILayout.Height(GuiConfig.HeaderButtonHeight)))
+			{
+				expanded = !expanded;
+				ModLog.Info(label + (expanded ? " expanded." : " collapsed."));
+			}
+
+			return expanded;
 		}
 
 		private void DrawTargetButtons()
@@ -263,6 +281,18 @@ namespace EL2_cheat_engine
 				};
 				buttonStyle.hover.background = btnHoverTexture;
 				buttonStyle.active.background = btnHoverTexture;
+			}
+
+			if (dropdownHeaderStyle == null)
+			{
+				dropdownHeaderStyle = new GUIStyle(buttonStyle)
+				{
+					fontSize = GuiConfig.HeaderFontSize,
+					alignment = TextAnchor.MiddleLeft,
+					normal = { textColor = GuiConfig.HeaderTextColor, background = btnTexture }
+				};
+				dropdownHeaderStyle.hover.background = btnHoverTexture;
+				dropdownHeaderStyle.active.background = btnHoverTexture;
 			}
 
 			if (targetButtonStyle == null)

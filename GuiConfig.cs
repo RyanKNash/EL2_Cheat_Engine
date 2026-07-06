@@ -4,7 +4,7 @@ namespace EL2_cheat_engine
 {
 	public static class GuiConfig
 	{
-		public static readonly Rect InitialWindowRect = new Rect(50f, 80f, 580f, 640f);
+		public static readonly Rect InitialWindowRect = new Rect(50f, 80f, 540f, 600f);
 		public static readonly Rect ReopenButtonRect = new Rect(10f, 10f, 34f, 30f);
 
 		public const int TextureSize = 2;
