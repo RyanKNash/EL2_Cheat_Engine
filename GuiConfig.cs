@@ -48,7 +48,8 @@ namespace EL2_cheat_engine
 		public static readonly Color IndustryIconColor = new Color(1f, 0.5f, 0f);
 		public static readonly Color ScienceIconColor = new Color(0f, 0.8f, 1f);
 		public static readonly Color InfluenceIconColor = new Color(0.7f, 0f, 1f);
-		public static readonly Color FameIconColor = Color.white;
+		// Fame is reserved for future implementation and intentionally hidden from the GUI.
+		// public static readonly Color FameIconColor = Color.white;
 		public static readonly Color StrategicIconColor = Color.gray;
 		public static readonly Color LuxuryIconColor = Color.green;
 		public static readonly Color SpecialIconColor = new Color(0.8f, 0.2f, 0.2f);

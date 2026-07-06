@@ -28,6 +28,10 @@ Known special resource indices:
 
 Special resource indices 28 through 32 are not currently exposed in the GUI because their gameplay meaning is unknown or unused for current testing.
 
+## Fame
+
+Fame is not currently in use and is intentionally hidden from the GUI. The source keeps commented-out placeholders for the fame multiplier state, configuration, icon, slider, and Harmony patch so it can be restored for future implementation.
+
 ## Current-Stock Injection
 
 `ResourceInjector` uses defensive reflection for current Gold/Money and Influence injection.

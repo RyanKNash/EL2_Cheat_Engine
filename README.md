@@ -15,7 +15,6 @@ A BepInEx mod for Endless Legend 2 that adds an in-game cheat menu for yield mul
    - Industry
    - Science
    - Influence
-   - Fame
 6. For resources, set an amount, choose resource groups, enable `Allow Resource Injection`, then press `ADD RESOURCES NOW`.
 
 Yield multipliers only apply to selected target empires. Resource injection is also blocked unless at least one target empire is selected and `Allow Resource Injection` is enabled.
@@ -44,7 +43,6 @@ Endless Legend 2/BepInEx/plugins/
   - Industry
   - Science
   - Influence
-  - Fame
 - Resource injection for selected target empires.
 - Separate resource group toggles for strategic, luxury, and special resources.
 - BepInEx logging for patching, targeting, and resource injection diagnostics.

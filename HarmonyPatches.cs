@@ -11,7 +11,8 @@ namespace EL2_cheat_engine
 		private static bool loggedMoneyStack;
 		private static bool loggedInfluenceStack;
 		private static bool loggedScienceStack;
-		private static bool loggedFameStack;
+		// Fame is reserved for future implementation and intentionally disabled.
+		// private static bool loggedFameStack;
 
 		public static void Register()
 		{
@@ -20,7 +21,8 @@ namespace EL2_cheat_engine
 			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfTheTreasury", "GainMoney", "Patch_Money");
 			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfCulture", "GainInfluence", "Patch_Influence");
 			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfScience", "GainResearch", "Patch_Science");
-			PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfDevelopment", "GainFame", "Patch_Fame");
+			// Fame is not currently in use.
+			// PatchPrefix(harmony, "Amplitude.Mercury.Simulation.DepartmentOfDevelopment", "GainFame", "Patch_Fame");
 		}
 
 		private static void PatchPostfix(Harmony harmony, string className, string methodName, string patchMethodName)
@@ -134,12 +136,13 @@ namespace EL2_cheat_engine
 			ApplyPrefixMultiplier("Patch_Science", __instance, ref gain, ModState.EnableScience, ModState.ScienceMult);
 		}
 
-		private static void Patch_Fame(object __instance, ref FixedPoint gain)
-		{
-			LogPatchStackOnce(ref loggedFameStack, "Patch_Fame");
-			OwnershipResolver.DumpMajorEmpireOnce("Fame MajorEmpire FINAL", __instance);
-			ApplyPrefixMultiplier("Patch_Fame", __instance, ref gain, ModState.EnableFame, ModState.FameMult);
-		}
+		// Fame is not currently in use, but this patch placeholder is kept for future implementation.
+		// private static void Patch_Fame(object __instance, ref FixedPoint gain)
+		// {
+		// 	LogPatchStackOnce(ref loggedFameStack, "Patch_Fame");
+		// 	OwnershipResolver.DumpMajorEmpireOnce("Fame MajorEmpire FINAL", __instance);
+		// 	ApplyPrefixMultiplier("Patch_Fame", __instance, ref gain, ModState.EnableFame, ModState.FameMult);
+		// }
 
 		private static void ApplyPrefixMultiplier(string label, object instance, ref FixedPoint gain, bool enabled, float multiplier)
 		{

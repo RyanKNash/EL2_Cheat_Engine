@@ -12,7 +12,8 @@ namespace EL2_cheat_engine
 
 		public static float ScienceMult = Config.ScienceMultiplierDefault;
 
-		public static float FameMult = Config.FameMultiplierDefault;
+		// Fame is reserved for future implementation and intentionally hidden from the GUI.
+		// public static float FameMult = Config.FameMultiplierDefault;
 
 		public static bool EnableIndustry = false;
 
@@ -22,7 +23,8 @@ namespace EL2_cheat_engine
 
 		public static bool EnableScience = false;
 
-		public static bool EnableFame = false;
+		// Fame is not currently in use.
+		// public static bool EnableFame = false;
 
 		public static int ResourceAmount = Config.ResourceAmountDefault;
 

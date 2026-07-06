@@ -16,8 +16,9 @@ namespace EL2_cheat_engine
 		public const float ScienceMultiplierDefault = 5f;
 		public const float ScienceMultiplierMax = 100f;
 
-		public const float FameMultiplierDefault = 5f;
-		public const float FameMultiplierMax = 100f;
+		// Fame is reserved for future implementation and intentionally hidden from the GUI.
+		// public const float FameMultiplierDefault = 5f;
+		// public const float FameMultiplierMax = 100f;
 
 		public const int ResourceAmountDefault = 100;
 		public const float ResourceAmountMin = 1f;

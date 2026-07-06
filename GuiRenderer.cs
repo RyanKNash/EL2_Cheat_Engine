@@ -21,7 +21,8 @@ namespace EL2_cheat_engine
 		private Texture2D icoInd;
 		private Texture2D icoSci;
 		private Texture2D icoInf;
-		private Texture2D icoFame;
+		// Fame is reserved for future implementation and intentionally hidden from the GUI.
+		// private Texture2D icoFame;
 		private Texture2D icoStrat;
 		private Texture2D icoLux;
 		private Texture2D icoSpec;
@@ -85,7 +86,8 @@ namespace EL2_cheat_engine
 			DrawStyledSlider("Industry", icoInd, ref ModState.EnableIndustry, ref ModState.IndustryMult, Config.IndustryMultiplierMax);
 			DrawStyledSlider("Science", icoSci, ref ModState.EnableScience, ref ModState.ScienceMult, Config.ScienceMultiplierMax);
 			DrawStyledSlider("Influence", icoInf, ref ModState.EnableInfluence, ref ModState.InfluenceMult, Config.InfluenceMultiplierMax);
-			DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
+			// Fame is not currently in use.
+			// DrawStyledSlider("Fame", icoFame, ref ModState.EnableFame, ref ModState.FameMult, Config.FameMultiplierMax);
 			GUILayout.EndVertical();
 
 			GUILayout.Space(GuiConfig.ResourceSectionSpacing);
@@ -220,7 +222,8 @@ namespace EL2_cheat_engine
 			if (icoInd == null) icoInd = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.IndustryIconColor);
 			if (icoSci == null) icoSci = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.ScienceIconColor);
 			if (icoInf == null) icoInf = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.InfluenceIconColor);
-			if (icoFame == null) icoFame = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.FameIconColor);
+			// Fame is not currently in use.
+			// if (icoFame == null) icoFame = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.FameIconColor);
 			if (icoStrat == null) icoStrat = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.StrategicIconColor);
 			if (icoLux == null) icoLux = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.LuxuryIconColor);
 			if (icoSpec == null) icoSpec = TextureFactory.MakeTex(GuiConfig.IconTextureSize, GuiConfig.IconTextureSize, GuiConfig.SpecialIconColor);
